@@ -1,8 +1,7 @@
-import { Link} from "react-router-dom"
+import { Link} from "react-router-dom";
 
 const Article = ({title, imageUrl, id}) => {
     
-
     return(
         <article className="article">
             <Link to={`/article/${id}`}>

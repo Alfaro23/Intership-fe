@@ -1,28 +1,36 @@
-import data from "../data/data.json";
+import { useState, useEffect } from "react";
+
 import Article from "../components/Article";
 import Header from "../components/Header";
 
+import { db } from "../firebase";
+import {query, collection, onSnapshot} from "firebase/firestore" 
+
 export const Articles = () => {
 
-    //const getArticles = async () => {
-        //return await fetch("https://remotemode.com/files/intership/front-end/financial-market-news-blog-project.json").then(data => console.log(data)).catch(err => console.log(err))//.then(item => setArticle(item))
-        //return await fetch("../data/data.json").then(data => console.log(data)).catch(err => console.log(err))
-    //}
+    const [articles, setArticles] = useState([]);
 
-    //useEffect(() => {
-        // const data = await fetch("https://remotemode.com/files/intership/front-end/financial-market-news-blog-project.json");
-        // getArticles("../data/data.json").then(item => console.log(item.json())).catch(error => console.log(error))
-        // getArticles("https://remotemode.com/files/intership/front-end/financial-market-news-blog-project.json").then(item => console.log(item)).catch(error => console.log(error))
-    //}, [])
+    useEffect(() => {
+        const queryList = query(collection(db, "articlesDataApp"));
 
-    // console.log(data)
+        const unSubScribe = onSnapshot(queryList, (querySnapshot) => {
+            let articlesArr = []
+            querySnapshot.forEach((doc) => articlesArr.push({...doc.data(), id: doc.id}));
+      
+            setArticles(articlesArr)
+        });
+      
+        return () => unSubScribe()
+    }, [])
+
+    console.log(articles)
     return(
         <div className="container">
             <Header/>
             <main className="main">
                 <div className="content">
                     {
-                        data.map((item, index) => <Article key={index} id={item.id} title={item.title} imageUrl={item.imageUrl}/>)
+                        articles.map((item, index) => <Article key={index} id={item.id} title={item.title} imageUrl={item.imageUrl}/>)
                     }
                 </div>
             </main>
